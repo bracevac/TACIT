@@ -18,24 +18,59 @@ The framework has three main components:
 
 TACIT provides a standard MCP server that communicates via JSON-RPC over stdio. It works with any MCP-compatible agent, including Claude Code, OpenCode, GitHub Copilot, and others.
 
-### 1. Build
+Requires JDK 17+
+
+### 1. Download Prebuilt Release JARs (Recommended)
+
+Use the release download script to get started quickly (no local build required). 
+It will download the latest server and library JARs from GitHub releases and place them in the current directory.
+
+```bash
+./download_release.sh
+```
+
+Optional:
+
+```bash
+# Download into a custom directory
+./download_release.sh ./dist
+
+# Use latest pre-release instead of latest stable release
+./download_release.sh --pre-release ./dist
+```
+
+By default, this downloads:
+
+| JAR | Default path |
+|-----|--------------|
+| MCP Server | `./TACIT.jar` |
+| Library | `./TACIT-library.jar` |
+
+### 2. Build from Source (Alternative)
 
 Requires JDK 17+ and sbt 1.12+.
 
 ```bash
-sbt assembly
+./build.sh
 ```
 
-This produces two JARs:
+Optional:
+
+```bash
+# Build and copy JARs into a custom directory
+./build.sh ./dist
+```
+
+This builds and copies two JARs:
 
 | JAR | Path |
 |-----|------|
-| MCP Server | `target/scala-*/TACIT-assembly-*.jar` |
-| Library | `library/target/scala-*/TACIT-library.jar` |
+| MCP Server | `./TACIT.jar` (or `./dist/TACIT.jar`) |
+| Library | `./TACIT-library.jar` (or `./dist/TACIT-library.jar`) |
 
-### 2. Configure Your Agent
+### 3. Configure Your Agent
 
-Add TACIT as an MCP server in your agent's configuration. Replace the paths below with the absolute paths to your built JARs.
+Add TACIT as an MCP server in your agent's configuration. Replace the paths below with absolute paths to your JARs (downloaded or built).
 
 <details open>
 <summary><b>Claude Code</b></summary>
@@ -48,7 +83,7 @@ Add to your project's `.mcp.json` (or `~/.claude.json` for global):
     "tacit": {
       "command": "java",
       "args": [
-        "-jar", "/path/to/TACIT-assembly.jar",
+        "-jar", "/path/to/TACIT.jar",
         "--library-jar", "/path/to/TACIT-library.jar"
       ]
     }
@@ -72,7 +107,7 @@ Add to your `opencode.json`:
       "enabled": true,
       "command": [
         "java",
-        "-jar", "/path/to/TACIT-assembly.jar",
+        "-jar", "/path/to/TACIT.jar",
         "--library-jar", "/path/to/TACIT-library.jar"
       ]
     }
@@ -93,7 +128,7 @@ Add to your `.vscode/mcp.json`:
     "tacit": {
       "command": "java",
       "args": [
-        "-jar", "/path/to/TACIT-assembly.jar",
+        "-jar", "/path/to/TACIT.jar",
         "--library-jar", "/path/to/TACIT-library.jar"
       ]
     }
